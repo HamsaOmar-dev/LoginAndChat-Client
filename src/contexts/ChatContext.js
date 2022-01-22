@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import "firebase/compat/auth";
-import { auth } from "../firebase";
 
 const ChatContext = React.createContext();
 
