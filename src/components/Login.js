@@ -22,7 +22,8 @@ function Login() {
     auth.signInWithRedirect(provider);
   }
 
-  function getGoogleAuth() {
+  useEffect(() => {
+    
     auth
       .getRedirectResult()
       .then((res) => {
@@ -53,10 +54,7 @@ function Login() {
       .catch((err) => {
         console.log(err);
       });
-  }
 
-  useEffect(() => {
-    getGoogleAuth();
   }, []);
 
   const {
