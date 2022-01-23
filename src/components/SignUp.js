@@ -36,7 +36,7 @@ function SignUp() {
     };
 
     axios
-      .post("http://localhost:5000/signup", userData)
+      .post("https://loginandchat.herokuapp.com/signup", userData)
       .then((res) => console.log(res.data))
       .catch((err) => console.log(err));
 
