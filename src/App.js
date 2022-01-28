@@ -6,9 +6,9 @@ import { ChatProvider } from "./contexts/ChatContext";
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import RequireAuth from "./components/RequireAuth";
 import Home from './components/Home';
-import RequireAuth from './components/RequireAuth';
-import Login from './components/Login';
+import Login from "./components/Login";
 import SignUp from './components/SignUp';
 
 function App() {

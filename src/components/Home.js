@@ -5,21 +5,28 @@ import { useChat } from "../contexts/ChatContext";
 import { ChatEngine } from "react-chat-engine";
 
 function Home() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { username, secret } = useChat();
+
+  console.log(user);
 
   return (
     <div>
-      <button
-        type="submit"
-        onClick={logout}
-        style={{ position: "absolute", top: "10px", right: "10px" }}
-      >
-        LogOut
-      </button>
+      <div className="navbar navbar-expand-lg navbar-light bg-light">
+        <div className="container-fluid">
+          <div className="logo-tab">SimpleCSCI</div>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <form className="d-flex">
+              <button type="submit" style={{position: 'absolute', right: "10px", top: "5px"}} onClick={logout}>
+                LogOut
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
       <ChatEngine
-        height="100vh"
-        width="100vw"
+        height="calc(100vh - 40px)"
         projectID={process.env.REACT_APP_CHAT_ENGINE_PROJECT_ID}
         userName={username}
         userSecret={secret}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -12,7 +12,7 @@ function Login() {
   const [error, setError] = useState("");
   const [style, setStyle] = useState({ visibility: "hidden" });
 
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const { username, setUsername, secret, setSecret } = useChat();
 
   let navigate = useNavigate();
@@ -22,40 +22,32 @@ function Login() {
     auth.signInWithRedirect(provider);
   }
 
-  useEffect(() => {
-    
-    auth
-      .getRedirectResult()
-      .then((res) => {
-        const user = res.user;
-        console.log(user);
+  if(user) {
+    if (user.providerData[0].providerId === "google.com") {
+      setUsername(user.email);
+      setSecret(user.uid);
+      console.log(username);
+      console.log(secret);
 
-        setUsername(user.email);
-        setSecret(user.uid);
-        console.log(username);
-        console.log(secret);
+      axios
+        .put(
+          "https://api.chatengine.io/users/",
+          { username, secret },
+          {
+            headers: {
+              "Private-Key": process.env.REACT_APP_CHAT_ENGINE_PRIVATE_KEY,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res);
 
-        axios
-          .put(
-            "https://api.chatengine.io/users/",
-            { username, secret },
-            {
-              headers: {
-                "Private-Key": process.env.REACT_APP_CHAT_ENGINE_PRIVATE_KEY,
-              },
-            }
-          )
-          .then((res) => {
-            console.log(res);
-            navigate("/");
-          })
-          .catch((err) => console.log(err));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          navigate("/");
+        })
+        .catch((err) => console.log(err));
+    }
+  }
 
-  }, []);
 
   const {
     register,

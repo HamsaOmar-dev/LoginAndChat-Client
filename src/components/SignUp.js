@@ -12,7 +12,7 @@ function SignUp() {
   const [error, setError] = useState("");
   const [style, setStyle] = useState({ visibility: "hidden" });
 
-  const { signup } = useAuth();
+  const { signup, user } = useAuth();
   const { username, setUsername, secret, setSecret } = useChat();
 
   let navigate = useNavigate();
@@ -22,6 +22,47 @@ function SignUp() {
     auth.signInWithRedirect(provider);
   }
 
+
+  if(user) {
+    if (user.providerData[0].providerId === "google.com") {
+      setUsername(user.email);
+      setSecret(user.uid);
+      console.log(username);
+      console.log(secret);
+
+      axios
+        .put(
+          "https://api.chatengine.io/users/",
+          { username, secret },
+          {
+            headers: {
+              "Private-Key": process.env.REACT_APP_CHAT_ENGINE_PRIVATE_KEY,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res);
+
+          axios
+            .post("https://loginandchat.herokuapp.com/googlesignup", {
+              name: user.displayName,
+              email: user.email,
+              uid: user.uid,
+            })
+            .then((res) => {
+              console.log(res.data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+
+          navigate("/");
+        })
+        .catch((err) => console.log(err));
+    }
+  }
+
+
   const {
     register,
     handleSubmit,
@@ -29,17 +70,17 @@ function SignUp() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    const userData = {
-      name: data.FirstName + " " + data.LastName,
-      email: data.Email,
-      password: data.Password,
-    };
 
     axios
-      .post("https://loginandchat.herokuapp.com/signup", userData)
+      .post("https://loginandchat.herokuapp.com/signup", {
+        name: data.FirstName + " " + data.LastName,
+        email: data.Email,
+        password: data.Password,
+      })
       .then((res) => console.log(res.data))
       .catch((err) => console.log(err));
 
+      
     signup(data.Email, data.Password)
       .then((userCred) => {
         const user = userCred.user;

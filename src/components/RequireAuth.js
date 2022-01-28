@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, Navigate } from 'react-router-dom';
-import { auth } from "../firebase";
+import { useAuth } from "../contexts/AuthContext";
+import LoadingScreen from './LoadingScreen';
 
 
 function RequireAuth() {
 
-  function Pending() {
-    return(
-      <div>loading...</div>
-    )
-  }
+  const { user } = useAuth();
 
   const [authState, setAuthState] = useState({
     signedIn: false,
@@ -18,14 +15,11 @@ function RequireAuth() {
   });
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setAuthState({ user: user, pending: false, signedIn: !!user });
-      console.log(user);
-    });
-  }, []);
+    setAuthState({ user: user, pending: false, signedIn: !!user });
+  }, [user]);
 
   if (authState.pending) {
-    return <Pending />;
+    return <LoadingScreen />;
   }
   if (!authState.signedIn) {
     return <Navigate to="/login" replace />;

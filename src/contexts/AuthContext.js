@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from "react";
 import 'firebase/compat/auth';
 import { auth } from '../firebase';
 
@@ -10,6 +10,17 @@ export function useAuth() {
 
 export function AuthProvider({children}) {
 
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      setUser(user);
+      setLoading(false);
+      console.log(user);
+    });
+  }, [user]);
+
   function signup(email, password) {
     return auth.createUserWithEmailAndPassword(email, password)
   }
@@ -20,16 +31,18 @@ export function AuthProvider({children}) {
     return auth.signOut();
   }
 
+
   const value = {
     signup,
     login,
-    logout
+    logout,
+    user
   };
 
-  return(
+  return (
     <AuthContext.Provider value={value}>
-      { children }
+      { !loading && children }
     </AuthContext.Provider>
-  )
+  );
 }
 
